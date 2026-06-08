@@ -1,0 +1,193 @@
+---
+title: "Segment Trees"
+order: 1
+difficulty: "Platinum"
+category: "Data Structures"
+description: "Build and query segment trees for efficient range queries and point updates in O(log N) time."
+problems:
+  - name: "Dynamic Range Sum Queries"
+    url: "https://cses.fi/problemset/task/1648"
+    difficulty: "Medium"
+  - name: "Dynamic Range Minimum Queries"
+    url: "https://cses.fi/problemset/task/1649"
+    difficulty: "Medium"
+  - name: "Range Update Queries"
+    url: "https://cses.fi/problemset/task/1651"
+    difficulty: "Hard"
+---
+
+A **segment tree** is a data structure that supports range queries and point (or range) updates in $O(\log N)$ time. It's one of the most versatile data structures in competitive programming.
+
+## Why Segment Trees?
+
+| Operation | Array | Prefix Sum | Segment Tree |
+|---|---|---|---|
+| Point update | $O(1)$ | $O(N)$ | $O(\log N)$ |
+| Range query | $O(N)$ | $O(1)$ | $O(\log N)$ |
+| Range update | $O(N)$ | $O(N)$ | $O(\log N)$* |
+
+*With lazy propagation.
+
+<Info>
+Segment trees offer the best balance when you need **both** updates and queries. If you only need queries (no updates), prefix sums are simpler and faster.
+</Info>
+
+## Structure
+
+A segment tree for an array of $N$ elements is a binary tree with $O(N)$ nodes. Each node stores the answer for a **range** of the array:
+
+- Root covers $[0, N-1]$
+- Each node covering $[l, r]$ has children covering $[l, m]$ and $[m+1, r]$ where $m = (l+r)/2$
+- Leaves cover individual elements
+
+## Implementation (1-indexed, Recursive)
+
+```cpp
+const int MAXN = 200005;
+long long tree[4 * MAXN];
+int a[MAXN];
+
+void build(int node, int start, int end) {
+    if (start == end) {
+        tree[node] = a[start];
+        return;
+    }
+    int mid = (start + end) / 2;
+    build(2 * node, start, mid);
+    build(2 * node + 1, mid + 1, end);
+    tree[node] = tree[2 * node] + tree[2 * node + 1];
+}
+
+void update(int node, int start, int end, int idx, long long val) {
+    if (start == end) {
+        a[idx] = val;
+        tree[node] = val;
+        return;
+    }
+    int mid = (start + end) / 2;
+    if (idx <= mid) update(2 * node, start, mid, idx, val);
+    else update(2 * node + 1, mid + 1, end, idx, val);
+    tree[node] = tree[2 * node] + tree[2 * node + 1];
+}
+
+long long query(int node, int start, int end, int l, int r) {
+    if (r < start || end < l) return 0; // out of range
+    if (l <= start && end <= r) return tree[node]; // fully in range
+    int mid = (start + end) / 2;
+    return query(2 * node, start, mid, l, r) +
+           query(2 * node + 1, mid + 1, end, l, r);
+}
+```
+
+### Usage
+
+```cpp
+int n, q;
+cin >> n >> q;
+for (int i = 1; i <= n; i++) cin >> a[i];
+build(1, 1, n);
+
+while (q--) {
+    int type;
+    cin >> type;
+    if (type == 1) {
+        int idx; long long val;
+        cin >> idx >> val;
+        update(1, 1, n, idx, val);
+    } else {
+        int l, r;
+        cin >> l >> r;
+        cout << query(1, 1, n, l, r) << "\n";
+    }
+}
+```
+
+<Warning>
+The tree array must be at least $4N$ in size, not $2N$! Due to rounding in the recursive splitting, you need extra space. Using `4 * MAXN` is safe.
+</Warning>
+
+## Iterative Segment Tree (Simpler)
+
+For sum queries, an iterative implementation is shorter and faster:
+
+```cpp
+int n;
+vector<long long> tree;
+
+void init(int _n) {
+    n = _n;
+    tree.assign(2 * n, 0);
+}
+
+void update(int i, long long val) { // 0-indexed
+    tree[i + n] = val;
+    for (i = (i + n) / 2; i >= 1; i /= 2) {
+        tree[i] = tree[2 * i] + tree[2 * i + 1];
+    }
+}
+
+long long query(int l, int r) { // [l, r), 0-indexed
+    long long res = 0;
+    for (l += n, r += n; l < r; l /= 2, r /= 2) {
+        if (l & 1) res += tree[l++];
+        if (r & 1) res += tree[--r];
+    }
+    return res;
+}
+```
+
+## Generalizing: Min, Max, GCD
+
+Change the merge operation:
+
+```cpp
+// For minimum
+tree[node] = min(tree[2*node], tree[2*node+1]);
+// Out-of-range returns INT_MAX
+
+// For maximum
+tree[node] = max(tree[2*node], tree[2*node+1]);
+// Out-of-range returns INT_MIN
+
+// For GCD
+tree[node] = __gcd(tree[2*node], tree[2*node+1]);
+// Out-of-range returns 0
+```
+
+<Spoiler title="Lazy Propagation (Range Updates)">
+For range updates (e.g., add $v$ to all elements in $[l, r]$), we use **lazy propagation** to defer updates:
+
+```cpp
+long long lazy[4 * MAXN];
+
+void pushdown(int node) {
+    if (lazy[node] != 0) {
+        tree[2*node] += lazy[node];
+        tree[2*node+1] += lazy[node];
+        lazy[2*node] += lazy[node];
+        lazy[2*node+1] += lazy[node];
+        lazy[node] = 0;
+    }
+}
+
+void rangeUpdate(int node, int start, int end, int l, int r, long long val) {
+    if (r < start || end < l) return;
+    if (l <= start && end <= r) {
+        tree[node] += val;
+        lazy[node] += val;
+        return;
+    }
+    pushdown(node);
+    int mid = (start + end) / 2;
+    rangeUpdate(2*node, start, mid, l, r, val);
+    rangeUpdate(2*node+1, mid+1, end, l, r, val);
+    tree[node] = tree[2*node] + tree[2*node+1]; // depends on query type
+}
+```
+
+The key idea: instead of updating every leaf, we store the pending update at higher nodes and only propagate when needed.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

@@ -1,0 +1,146 @@
+---
+title: "Shortest Paths"
+order: 3
+difficulty: "Gold"
+category: "Graphs"
+description: "Find shortest paths in weighted graphs using Dijkstra's, Bellman-Ford, and Floyd-Warshall algorithms."
+problems:
+  - name: "Shortest Routes I"
+    url: "https://cses.fi/problemset/task/1671"
+    difficulty: "Medium"
+  - name: "Shortest Routes II"
+    url: "https://cses.fi/problemset/task/1672"
+    difficulty: "Medium"
+  - name: "Flight Discount"
+    url: "https://cses.fi/problemset/task/1195"
+    difficulty: "Hard"
+---
+
+This module covers the three main shortest path algorithms for weighted graphs.
+
+## Dijkstra's Algorithm
+
+Finds the shortest path from a source to all other vertices in a graph with **non-negative** edge weights. Time complexity: $O((N + M) \log N)$ with a priority queue.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef pair<long long, int> pli;
+
+vector<long long> dijkstra(int src, vector<vector<pair<int,long long>>> &adj) {
+    int n = adj.size();
+    vector<long long> dist(n, LLONG_MAX);
+    priority_queue<pli, vector<pli>, greater<pli>> pq;
+    
+    dist[src] = 0;
+    pq.push({0, src});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        
+        if (d > dist[u]) continue; // outdated entry
+        
+        for (auto &[v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    
+    return dist;
+}
+```
+
+<Info>
+The line `if (d > dist[u]) continue;` is crucial. Since we use a lazy deletion approach (we don't decrease keys in the priority queue), we skip entries that are no longer optimal.
+</Info>
+
+<Warning>
+Dijkstra's algorithm does **NOT** work with negative edge weights! If the graph has negative edges, use Bellman-Ford instead.
+</Warning>
+
+## Bellman-Ford Algorithm
+
+Finds shortest paths from a source even with **negative** edge weights. It can also detect **negative cycles**. Time complexity: $O(NM)$.
+
+```cpp
+struct Edge { int u, v; long long w; };
+
+vector<long long> bellmanFord(int src, int n, vector<Edge> &edges) {
+    vector<long long> dist(n, LLONG_MAX);
+    dist[src] = 0;
+    
+    for (int i = 0; i < n - 1; i++) {
+        for (auto &[u, v, w] : edges) {
+            if (dist[u] != LLONG_MAX && dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+            }
+        }
+    }
+    
+    // Check for negative cycles
+    for (auto &[u, v, w] : edges) {
+        if (dist[u] != LLONG_MAX && dist[u] + w < dist[v]) {
+            cout << "Negative cycle detected!\n";
+            break;
+        }
+    }
+    
+    return dist;
+}
+```
+
+<Note>
+Bellman-Ford runs $N-1$ iterations because the shortest path can have at most $N-1$ edges. If the $N$-th iteration still relaxes an edge, a negative cycle exists.
+</Note>
+
+## Floyd-Warshall Algorithm
+
+Finds shortest paths between **all pairs** of vertices. Time complexity: $O(N^3)$. Only use when $N \leq 500$.
+
+```cpp
+// Initialize distance matrix
+vector<vector<long long>> dist(n, vector<long long>(n, LLONG_MAX / 2));
+for (int i = 0; i < n; i++) dist[i][i] = 0;
+
+// Read edges
+for (auto &[u, v, w] : edges) {
+    dist[u][v] = min(dist[u][v], w);
+}
+
+// Floyd-Warshall
+for (int k = 0; k < n; k++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+        }
+    }
+}
+```
+
+<Warning>
+Use `LLONG_MAX / 2` (not `LLONG_MAX`) to initialize distances, to avoid overflow when adding two large values!
+</Warning>
+
+## Algorithm Comparison
+
+| Algorithm | Complexity | Negative Edges | All Pairs | Best For |
+|-----------|-----------|----------------|-----------|----------|
+| Dijkstra's | $O((N+M) \log N)$ | ✗ | ✗ | Single-source, non-negative |
+| Bellman-Ford | $O(NM)$ | ✓ | ✗ | Negative edges, cycle detection |
+| Floyd-Warshall | $O(N^3)$ | ✓ | ✓ | All-pairs, small $N$ |
+
+<Spoiler title="When to use which algorithm">
+- **Dijkstra**: The default choice. Use it whenever edge weights are non-negative (which is most problems).
+- **Bellman-Ford**: When the problem mentions negative weights or asks you to detect negative cycles.
+- **Floyd-Warshall**: When you need distances between ALL pairs of vertices and $N$ is small (≤ 400-500).
+
+In practice, about 90% of shortest path problems use Dijkstra's.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

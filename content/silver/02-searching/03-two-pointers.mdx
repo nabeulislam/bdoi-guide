@@ -1,0 +1,168 @@
+---
+title: "Two Pointers"
+order: 3
+difficulty: "Silver"
+category: "Techniques"
+description: "Solve subarray and substring problems efficiently using the two-pointer and sliding window techniques."
+problems:
+  - name: "Diamond Collector"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=643"
+    difficulty: "Medium"
+  - name: "Books"
+    url: "https://codeforces.com/problemset/problem/279/B"
+    difficulty: "Easy"
+  - name: "Sum of Two Values"
+    url: "https://cses.fi/problemset/task/1640"
+    difficulty: "Medium"
+---
+
+The **two-pointer technique** uses two pointers (indices) that move through the data, typically in the same direction. It reduces $O(N^2)$ brute force to $O(N)$ for problems involving subarrays, subsequences, or pairs.
+
+## Basic Idea
+
+Instead of checking all pairs $(i, j)$ with two nested loops, maintain two pointers that only move forward:
+
+```
+[  l -----> ... -----> r  ]
+```
+
+Since each pointer moves at most $N$ times, the total work is $O(N)$.
+
+## Classic Example: Two Sum (Sorted Array)
+
+Given a sorted array, find two elements that sum to a target:
+
+```cpp
+int n, target;
+cin >> n >> target;
+vector<int> a(n);
+for (auto &x : a) cin >> x;
+sort(a.begin(), a.end());
+
+int l = 0, r = n - 1;
+while (l < r) {
+    int sum = a[l] + a[r];
+    if (sum == target) {
+        cout << a[l] << " " << a[r] << "\n";
+        break;
+    } else if (sum < target) {
+        l++; // need larger sum
+    } else {
+        r--; // need smaller sum
+    }
+}
+```
+
+<Info>
+This works because the array is sorted. If the sum is too small, increasing `l` makes it larger. If too big, decreasing `r` makes it smaller. Each step eliminates one possibility, so we check at most $N$ pairs.
+</Info>
+
+## Sliding Window
+
+The sliding window is a special case of two pointers where both pointers move left to right, maintaining a "window" $[l, r]$.
+
+### Maximum Sum Subarray of Size K
+
+```cpp
+int n, k;
+cin >> n >> k;
+vector<int> a(n);
+for (auto &x : a) cin >> x;
+
+long long windowSum = 0;
+for (int i = 0; i < k; i++) windowSum += a[i];
+
+long long maxSum = windowSum;
+for (int i = k; i < n; i++) {
+    windowSum += a[i] - a[i - k]; // slide the window
+    maxSum = max(maxSum, windowSum);
+}
+
+cout << maxSum << "\n";
+```
+
+### Longest Subarray with Sum ≤ S
+
+```cpp
+int n;
+long long s;
+cin >> n >> s;
+vector<int> a(n);
+for (auto &x : a) cin >> x;
+
+int l = 0, best = 0;
+long long sum = 0;
+
+for (int r = 0; r < n; r++) {
+    sum += a[r];
+    while (sum > s) {
+        sum -= a[l];
+        l++;
+    }
+    best = max(best, r - l + 1);
+}
+
+cout << best << "\n";
+```
+
+<Warning>
+The sliding window technique requires that expanding the window (moving `r` right) can only make the condition "worse" or equal, and shrinking (moving `l` right) can only make it "better" or equal. This monotonicity property is essential for correctness.
+</Warning>
+
+## Counting Subarrays
+
+### Subarrays with Sum ≤ S
+
+For each right endpoint `r`, find the smallest `l` such that the sum is ≤ S. Then there are `r - l + 1` valid subarrays ending at `r`.
+
+```cpp
+long long count = 0;
+int l = 0;
+long long sum = 0;
+
+for (int r = 0; r < n; r++) {
+    sum += a[r];
+    while (sum > s) {
+        sum -= a[l];
+        l++;
+    }
+    count += r - l + 1;
+}
+```
+
+<Note>
+To count subarrays with sum **exactly** equal to $S$, compute: count(sum ≤ S) − count(sum ≤ S−1). This "at most" trick converts an exact counting problem into two two-pointer problems.
+</Note>
+
+## Two Pointers on Two Arrays
+
+### Merging Two Sorted Arrays
+
+```cpp
+vector<int> merge(vector<int> &a, vector<int> &b) {
+    vector<int> result;
+    int i = 0, j = 0;
+    while (i < (int)a.size() && j < (int)b.size()) {
+        if (a[i] <= b[j]) result.push_back(a[i++]);
+        else result.push_back(b[j++]);
+    }
+    while (i < (int)a.size()) result.push_back(a[i++]);
+    while (j < (int)b.size()) result.push_back(b[j++]);
+    return result;
+}
+```
+
+<Spoiler title="When two pointers won't work">
+Two pointers require a **monotonic relationship** between the pointers. If moving one pointer doesn't consistently change the condition in one direction, you can't use this technique. Signs that two pointers apply:
+
+1. The array is sorted (or you can sort it)
+2. You're looking at contiguous subarrays
+3. Adding/removing elements from the window changes some quantity monotonically
+4. The problem asks for "minimum/maximum length" or "count" of valid subarrays
+
+If the array has negative numbers and you're looking at sums, the monotonicity breaks — consider prefix sums with a sorted structure instead.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

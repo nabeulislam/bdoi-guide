@@ -1,0 +1,157 @@
+---
+title: "Dynamic Programming"
+order: 1
+difficulty: "Gold"
+category: "Dynamic Programming"
+description: "Unlock the power of DP — learn to break problems into overlapping subproblems and build solutions bottom-up."
+problems:
+  - name: "Dice Combinations"
+    url: "https://cses.fi/problemset/task/1633"
+    difficulty: "Easy"
+  - name: "Coin Combinations I"
+    url: "https://cses.fi/problemset/task/1635"
+    difficulty: "Medium"
+  - name: "Longest Increasing Subsequence"
+    url: "https://cses.fi/problemset/task/1145"
+    difficulty: "Hard"
+---
+
+**Dynamic Programming (DP)** is perhaps the most important algorithmic technique in competitive programming. It solves problems by breaking them into smaller **overlapping subproblems** and storing the results to avoid redundant computation.
+
+## When to Use DP
+
+A problem is a good DP candidate when:
+1. It has **optimal substructure** — the optimal solution contains optimal solutions to sub-problems.
+2. It has **overlapping subproblems** — the same sub-problems are solved multiple times.
+
+<Info>
+DP is essentially "smart recursion". Instead of solving the same subproblem over and over, we solve it once and store the result.
+</Info>
+
+## Bottom-Up vs Top-Down
+
+### Top-Down (Memoization)
+
+Start from the big problem and recursively break it down:
+
+```cpp
+map<int, long long> memo;
+
+long long solve(int n) {
+    if (n <= 1) return 1;
+    if (memo.count(n)) return memo[n];
+    return memo[n] = solve(n - 1) + solve(n - 2);
+}
+```
+
+### Bottom-Up (Tabulation)
+
+Build up from the smallest sub-problems:
+
+```cpp
+vector<long long> dp(n + 1);
+dp[0] = 1;
+dp[1] = 1;
+for (int i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2];
+}
+```
+
+<Note>
+Bottom-up is generally preferred in competitive programming because it avoids recursion overhead and stack overflow risks. Top-down is useful when the state space is sparse (many states never visited).
+</Note>
+
+## Classic DP Problems
+
+### 1. Coin Change (Minimum Coins)
+
+Given coins of denominations $c_1, c_2, \ldots, c_k$, find the minimum number of coins to make sum $S$.
+
+**State**: $dp[s]$ = minimum coins to make sum $s$.
+
+**Transition**: $dp[s] = \min(dp[s - c_i] + 1)$ for all valid coins $c_i$.
+
+```cpp
+const int INF = 1e9;
+vector<int> dp(s + 1, INF);
+dp[0] = 0;
+
+for (int i = 1; i <= s; i++) {
+    for (int c : coins) {
+        if (c <= i && dp[i - c] != INF) {
+            dp[i] = min(dp[i], dp[i - c] + 1);
+        }
+    }
+}
+
+cout << (dp[s] == INF ? -1 : dp[s]) << "\n";
+```
+
+### 2. 0/1 Knapsack
+
+Given $N$ items with weight $w_i$ and value $v_i$, and a knapsack capacity $W$, maximize the total value.
+
+```cpp
+vector<vector<int>> dp(n + 1, vector<int>(W + 1, 0));
+
+for (int i = 1; i <= n; i++) {
+    for (int j = 0; j <= W; j++) {
+        dp[i][j] = dp[i - 1][j]; // don't take item i
+        if (j >= w[i]) {
+            dp[i][j] = max(dp[i][j], dp[i - 1][j - w[i]] + v[i]); // take it
+        }
+    }
+}
+
+cout << dp[n][W] << "\n";
+```
+
+<Warning>
+The 0/1 knapsack has $O(NW)$ complexity. If $W$ can be up to $10^9$, this approach won't work — you'd need a different technique like meet-in-the-middle or a value-based DP.
+</Warning>
+
+### 3. Longest Increasing Subsequence (LIS)
+
+Find the length of the longest strictly increasing subsequence.
+
+**$O(N^2)$ solution**:
+
+```cpp
+vector<int> dp(n, 1);
+for (int i = 1; i < n; i++) {
+    for (int j = 0; j < i; j++) {
+        if (a[j] < a[i]) {
+            dp[i] = max(dp[i], dp[j] + 1);
+        }
+    }
+}
+int lis = *max_element(dp.begin(), dp.end());
+```
+
+<Spoiler title="O(N log N) LIS using binary search">
+Maintain an array `tails` where `tails[i]` is the smallest tail element of all increasing subsequences of length `i+1`:
+
+```cpp
+vector<int> tails;
+for (int x : a) {
+    auto it = lower_bound(tails.begin(), tails.end(), x);
+    if (it == tails.end()) tails.push_back(x);
+    else *it = x;
+}
+cout << tails.size() << "\n"; // LIS length
+```
+
+This works because we greedily maintain the best possible subsequences.
+</Spoiler>
+
+## DP Recipe
+
+1. **Define the state** — What information do you need to describe a subproblem? (Usually: position, remaining capacity, flags...)
+2. **Define the transition** — How do you compute the answer for a state from smaller states?
+3. **Set base cases** — What are the trivial subproblems?
+4. **Determine the order** — Process states so that dependencies are resolved first.
+5. **Extract the answer** — Usually `dp[n]` or `dp[n][W]`.
+
+## Practice Problems
+
+<Problems />

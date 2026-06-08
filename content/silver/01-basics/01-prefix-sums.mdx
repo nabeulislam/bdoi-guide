@@ -1,0 +1,157 @@
+---
+title: "Prefix Sums"
+order: 1
+difficulty: "Silver"
+category: "Techniques"
+description: "Efficiently answer range sum queries in O(1) using prefix sums — one of the most fundamental techniques in competitive programming."
+problems:
+  - name: "Breed Counting"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=572"
+    difficulty: "Easy"
+  - name: "Subsequences Summing to Sevens"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=595"
+    difficulty: "Medium"
+  - name: "Forest Queries"
+    url: "https://cses.fi/problemset/task/1652"
+    difficulty: "Hard"
+---
+
+**Prefix sums** (also called cumulative sums) let you preprocess an array so that any range sum query can be answered in $O(1)$ time, after an $O(N)$ preprocessing step.
+
+## The Problem
+
+Given an array $a$ of $N$ elements, answer $Q$ queries of the form: *"What is the sum of elements from index $l$ to $r$?"*
+
+**Naive approach**: For each query, loop from $l$ to $r$ and add up. This is $O(N)$ per query, giving $O(NQ)$ total — too slow when $N, Q \leq 10^5$.
+
+**Prefix sum approach**: $O(N)$ preprocessing + $O(1)$ per query = $O(N + Q)$ total.
+
+## Building a Prefix Sum Array
+
+The prefix sum array $p$ is defined as:
+
+$$
+p[i] = a[0] + a[1] + \cdots + a[i-1]
+$$
+
+So $p[0] = 0$, and $p[i] = p[i-1] + a[i-1]$.
+
+```cpp
+int n, q;
+cin >> n >> q;
+
+vector<long long> a(n), p(n + 1, 0);
+for (int i = 0; i < n; i++) {
+    cin >> a[i];
+    p[i + 1] = p[i] + a[i];
+}
+```
+
+<Info>
+We use 1-indexed prefix sums (array of size $N+1$) so that the sum of range $[l, r]$ (0-indexed) is simply `p[r+1] - p[l]`. This avoids edge-case handling for $l = 0$.
+</Info>
+
+## Answering Queries
+
+The sum of the range $[l, r]$ (0-indexed, inclusive) is:
+
+$$
+\text{sum}(l, r) = p[r+1] - p[l]
+$$
+
+```cpp
+while (q--) {
+    int l, r;
+    cin >> l >> r; // assume 1-indexed input
+    l--; r--; // convert to 0-indexed
+    cout << p[r + 1] - p[l] << "\n";
+}
+```
+
+### Why Does This Work?
+
+$$
+p[r+1] = a[0] + a[1] + \cdots + a[r]
+$$
+$$
+p[l] = a[0] + a[1] + \cdots + a[l-1]
+$$
+$$
+p[r+1] - p[l] = a[l] + a[l+1] + \cdots + a[r]
+$$
+
+<Warning>
+Use `long long` for prefix sums! Even if individual elements fit in `int`, the cumulative sum can overflow. For $N = 10^5$ elements each up to $10^9$, the sum can reach $10^{14}$.
+</Warning>
+
+## 2D Prefix Sums
+
+For a 2D grid, you can answer *"sum of all elements in a rectangle"* queries in $O(1)$:
+
+```cpp
+int n, m, q;
+cin >> n >> m >> q;
+
+vector<vector<long long>> grid(n, vector<long long>(m));
+vector<vector<long long>> p(n + 1, vector<long long>(m + 1, 0));
+
+for (int i = 0; i < n; i++)
+    for (int j = 0; j < m; j++)
+        cin >> grid[i][j];
+
+// Build 2D prefix sum
+for (int i = 1; i <= n; i++)
+    for (int j = 1; j <= m; j++)
+        p[i][j] = grid[i-1][j-1] + p[i-1][j] + p[i][j-1] - p[i-1][j-1];
+```
+
+Query for rectangle from $(r_1, c_1)$ to $(r_2, c_2)$ (0-indexed):
+
+```cpp
+long long query(int r1, int c1, int r2, int c2) {
+    return p[r2+1][c2+1] - p[r1][c2+1] - p[r2+1][c1] + p[r1][c1];
+}
+```
+
+<Spoiler title="Visualizing 2D Prefix Sum Queries">
+Think of it using **inclusion-exclusion**:
+
+```
++---+---+---+
+| A | B |   |
++---+---+---+
+| C | D |   |   Query area = D
++---+---+---+
+
+sum(D) = p[r2][c2] - p[r1][c2] - p[r2][c1] + p[r1][c1]
+```
+
+We take the full rectangle, subtract the top and left parts, then add back the top-left corner (which was subtracted twice).
+</Spoiler>
+
+## Common Applications
+
+### Maximum Subarray Sum (Kadane's Alternative)
+
+Using prefix sums, the maximum subarray sum is:
+
+$$
+\max_{l \leq r} (p[r+1] - p[l]) = \max_r(p[r+1]) - \min_l(p[l])
+$$
+
+But tracking the running minimum is more efficient — this leads to Kadane's algorithm.
+
+### Difference Arrays
+
+The inverse of prefix sums. To add $v$ to all elements in range $[l, r]$:
+
+```cpp
+diff[l] += v;
+diff[r + 1] -= v;
+```
+
+Then take a prefix sum of `diff` to get the final array. This lets you do $Q$ range updates in $O(N + Q)$.
+
+## Practice Problems
+
+<Problems />

@@ -1,0 +1,182 @@
+---
+title: "Sets and Maps"
+order: 3
+difficulty: "Bronze"
+category: "Basics"
+description: "Use the powerful STL containers — set, map, and their unordered variants — for efficient lookups, counting, and deduplication."
+problems:
+  - name: "Registration System"
+    url: "https://codeforces.com/problemset/problem/4/C"
+    difficulty: "Easy"
+  - name: "Where do I Turn?"
+    url: "https://codeforces.com/problemset/problem/227/B"
+    difficulty: "Medium"
+  - name: "Not Divisible"
+    url: "https://atcoder.jp/contests/abc170/tasks/abc170_d"
+    difficulty: "Medium"
+---
+
+The STL provides **associative containers** — `set`, `map`, and their unordered counterparts — that let you store and look up data far more efficiently than scanning through a vector.
+
+## Sets
+
+A `set` stores **unique elements** in sorted order. Lookups, insertions, and deletions are all $O(\log N)$.
+
+```cpp
+set<int> s;
+s.insert(5);
+s.insert(3);
+s.insert(5); // duplicate, ignored
+s.insert(1);
+
+// s = {1, 3, 5}
+
+cout << s.size() << "\n";        // 3
+cout << s.count(3) << "\n";      // 1 (element exists)
+cout << s.count(4) << "\n";      // 0 (not found)
+
+s.erase(3);
+// s = {1, 5}
+```
+
+### Iterating Over a Set
+
+```cpp
+for (int x : s) {
+    cout << x << " "; // prints in sorted order
+}
+```
+
+### Useful Set Operations
+
+```cpp
+auto it = s.lower_bound(4); // iterator to first element >= 4
+auto it2 = s.upper_bound(4); // iterator to first element > 4
+
+if (it != s.end()) {
+    cout << *it << "\n"; // 5
+}
+```
+
+<Info>
+Use `s.lower_bound()` (member function) instead of `lower_bound(s.begin(), s.end(), x)` (algorithm). The member function is $O(\log N)$ while the algorithm version is $O(N)$ for sets!
+</Info>
+
+## Multiset
+
+A `multiset` allows **duplicate elements**:
+
+```cpp
+multiset<int> ms;
+ms.insert(5);
+ms.insert(5);
+ms.insert(3);
+
+cout << ms.count(5) << "\n"; // 2
+
+ms.erase(ms.find(5)); // removes ONE occurrence of 5
+// ms = {3, 5}
+
+ms.erase(5); // removes ALL occurrences of 5
+// ms = {3}
+```
+
+<Warning>
+Be careful with `ms.erase(val)` — it removes **all** occurrences. To remove just one, use `ms.erase(ms.find(val))` — but first check that `ms.find(val) != ms.end()`!
+</Warning>
+
+## Maps
+
+A `map` stores **key-value pairs** sorted by key. Both lookup and insertion are $O(\log N)$.
+
+```cpp
+map<string, int> age;
+age["Alice"] = 20;
+age["Bob"] = 22;
+age["Charlie"] = 19;
+
+cout << age["Alice"] << "\n";  // 20
+cout << age.count("Dave") << "\n"; // 0
+
+// Iterate over all entries
+for (auto &[name, a] : age) {
+    cout << name << ": " << a << "\n";
+}
+```
+
+### Frequency Counting
+
+One of the most common uses of a map:
+
+```cpp
+vector<int> v = {1, 3, 2, 1, 3, 3, 2};
+map<int, int> freq;
+
+for (int x : v) {
+    freq[x]++;
+}
+
+// freq = {1: 2, 2: 2, 3: 3}
+for (auto &[val, cnt] : freq) {
+    cout << val << " appears " << cnt << " times\n";
+}
+```
+
+<Note>
+Accessing a non-existent key with `map[key]` **creates** that key with a default value (0 for int). Use `map.count(key)` or `map.find(key)` to check existence without creating it.
+</Note>
+
+## Unordered Variants
+
+For even faster operations (amortized $O(1)$), use `unordered_set` and `unordered_map`:
+
+```cpp
+unordered_set<int> us;
+unordered_map<string, int> um;
+```
+
+<Warning>
+Unordered containers don't maintain sorted order and can degrade to $O(N)$ per operation in worst case (hash collisions). For competitive programming, `unordered_map` is usually fine, but if you get TLE, try switching to `map` or use a custom hash.
+</Warning>
+
+## Common Patterns
+
+### Check for Duplicates
+
+```cpp
+bool hasDuplicate(vector<int> &v) {
+    set<int> seen;
+    for (int x : v) {
+        if (seen.count(x)) return true;
+        seen.insert(x);
+    }
+    return false;
+}
+```
+
+### Find Most Frequent Element
+
+```cpp
+map<int, int> freq;
+for (int x : v) freq[x]++;
+
+int maxFreq = 0, result = 0;
+for (auto &[val, cnt] : freq) {
+    if (cnt > maxFreq) {
+        maxFreq = cnt;
+        result = val;
+    }
+}
+```
+
+<Spoiler title="Set vs. Sorting for uniqueness">
+To get unique elements, you can either:
+1. Insert into a `set` — $O(N \log N)$
+2. Sort and use `unique()` — also $O(N \log N)$
+
+The sorting approach is typically faster in practice due to cache locality, but sets are simpler to code and allow dynamic insertions.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

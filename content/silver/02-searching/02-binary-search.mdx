@@ -1,0 +1,153 @@
+---
+title: "Binary Search"
+order: 2
+difficulty: "Silver"
+category: "Techniques"
+description: "Master binary search on sorted arrays and learn the powerful technique of binary searching the answer."
+problems:
+  - name: "Convention"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=858"
+    difficulty: "Medium"
+  - name: "Social Distancing"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=1038"
+    difficulty: "Medium"
+  - name: "Factory Machines"
+    url: "https://cses.fi/problemset/task/1620"
+    difficulty: "Medium"
+---
+
+**Binary search** is a technique for finding an element in a sorted sequence in $O(\log N)$ time. But more importantly, the concept of *binary searching the answer* extends this to a huge class of optimization problems.
+
+## Basic Binary Search
+
+Given a sorted array, find whether a target value exists:
+
+```cpp
+int binarySearch(vector<int> &a, int target) {
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2; // avoid overflow
+        if (a[mid] == target) return mid;
+        else if (a[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1; // not found
+}
+```
+
+<Info>
+Always use `lo + (hi - lo) / 2` instead of `(lo + hi) / 2` to avoid integer overflow when `lo` and `hi` are large.
+</Info>
+
+## STL Binary Search Functions
+
+C++ provides built-in functions that are easier and less error-prone:
+
+```cpp
+vector<int> a = {1, 3, 5, 7, 9, 11};
+
+// Check existence
+bool found = binary_search(a.begin(), a.end(), 7); // true
+
+// First position >= target
+auto it = lower_bound(a.begin(), a.end(), 6);
+// *it = 7, index = it - a.begin() = 3
+
+// First position > target
+auto it2 = upper_bound(a.begin(), a.end(), 7);
+// *it2 = 9, index = 4
+```
+
+### Counting Elements in a Range
+
+```cpp
+// Count elements in [lo, hi]
+int count = upper_bound(a.begin(), a.end(), hi) - 
+            lower_bound(a.begin(), a.end(), lo);
+```
+
+## Binary Search the Answer
+
+This is the most powerful application of binary search. The idea:
+
+1. You need to find the **minimum** (or maximum) value of something.
+2. You can write a function `check(x)` that returns whether value `x` is achievable.
+3. The function is **monotonic**: if `x` works, then `x+1` also works (or vice versa).
+4. Binary search over possible values of the answer!
+
+```cpp
+// Find minimum x such that check(x) is true
+long long lo = 0, hi = 1e18;
+while (lo < hi) {
+    long long mid = lo + (hi - lo) / 2;
+    if (check(mid)) {
+        hi = mid;      // mid works, try smaller
+    } else {
+        lo = mid + 1;  // mid doesn't work, need bigger
+    }
+}
+// lo == hi == answer
+```
+
+<Warning>
+The trickiest part of binary search is getting the bounds right. Off-by-one errors are extremely common. Always verify: does `lo` converge to `hi`? Will the loop always terminate? Test with small examples.
+</Warning>
+
+### Example: Minimum Time to Finish Jobs
+
+**Problem**: There are $N$ machines. Machine $i$ takes $t_i$ seconds to complete one job. Find the minimum time to complete $K$ jobs.
+
+```cpp
+bool canFinish(vector<long long> &t, long long k, long long time) {
+    long long jobs = 0;
+    for (long long ti : t) {
+        jobs += time / ti;
+        if (jobs >= k) return true; // early exit
+    }
+    return false;
+}
+
+int main() {
+    int n;
+    long long k;
+    cin >> n >> k;
+    
+    vector<long long> t(n);
+    for (auto &x : t) cin >> x;
+    
+    long long lo = 1, hi = *min_element(t.begin(), t.end()) * k;
+    while (lo < hi) {
+        long long mid = lo + (hi - lo) / 2;
+        if (canFinish(t, k, mid)) hi = mid;
+        else lo = mid + 1;
+    }
+    
+    cout << lo << "\n";
+}
+```
+
+<Note>
+When binary searching the answer, think carefully about the search space bounds. `lo` should be the smallest possible answer, and `hi` should be the largest. If in doubt, make `hi` larger — it only adds $\log$ factor.
+</Note>
+
+## Binary Search on Doubles
+
+For floating-point binary search, use a fixed number of iterations instead of a condition:
+
+```cpp
+double lo = 0, hi = 1e9;
+for (int iter = 0; iter < 100; iter++) {
+    double mid = (lo + hi) / 2;
+    if (check(mid)) hi = mid;
+    else lo = mid;
+}
+cout << fixed << setprecision(9) << lo << "\n";
+```
+
+<Spoiler title="Why 100 iterations?">
+Each iteration halves the search space. After 100 iterations, the precision is about $\frac{hi - lo}{2^{100}} \approx 10^{-21}$, which is far more than enough for any problem. This approach avoids tricky floating-point comparison issues.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

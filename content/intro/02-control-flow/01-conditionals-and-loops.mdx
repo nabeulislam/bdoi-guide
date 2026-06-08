@@ -1,0 +1,208 @@
+---
+title: "Conditionals and Loops"
+order: 3
+difficulty: "Intro"
+category: "Getting Started"
+description: "Master if/else statements, for/while loops, and essential control flow patterns used in every competitive programming solution."
+problems:
+  - name: "Young Physicist"
+    url: "https://codeforces.com/problemset/problem/69/A"
+    difficulty: "Easy"
+  - name: "Beautiful Matrix"
+    url: "https://codeforces.com/problemset/problem/263/A"
+    difficulty: "Easy"
+  - name: "Bit++"
+    url: "https://codeforces.com/problemset/problem/282/A"
+    difficulty: "Easy"
+---
+
+Every competitive programming solution relies heavily on **conditionals** and **loops**. This module covers the essential control flow constructs you'll use in virtually every problem.
+
+## Conditionals
+
+### Basic if/else
+
+```cpp
+int x;
+cin >> x;
+
+if (x > 0) {
+    cout << "positive\n";
+} else if (x < 0) {
+    cout << "negative\n";
+} else {
+    cout << "zero\n";
+}
+```
+
+### Ternary Operator
+
+For simple conditions, use the ternary operator for concise code:
+
+```cpp
+int a = 5, b = 3;
+int mx = (a > b) ? a : b; // mx = 5
+cout << (x % 2 == 0 ? "even" : "odd") << "\n";
+```
+
+### Logical Operators
+
+```cpp
+// AND: both must be true
+if (x > 0 && x < 100) { /* x is between 1 and 99 */ }
+
+// OR: at least one must be true
+if (x == 0 || x == 1) { /* x is 0 or 1 */ }
+
+// NOT: inverts the condition
+if (!(x > 5)) { /* x is 5 or less */ }
+```
+
+<Info>
+C++ uses **short-circuit evaluation**: in `a && b`, if `a` is false, `b` is never evaluated. This is useful for guarding against out-of-bounds access: `if (i >= 0 && arr[i] == target)`.
+</Info>
+
+## For Loops
+
+### Standard For Loop
+
+```cpp
+// Print numbers 1 to N
+for (int i = 1; i <= n; i++) {
+    cout << i << " ";
+}
+```
+
+### Reverse Iteration
+
+```cpp
+for (int i = n; i >= 1; i--) {
+    cout << i << " ";
+}
+```
+
+### Iterating Over a Vector
+
+```cpp
+vector<int> v = {10, 20, 30, 40, 50};
+
+// Index-based
+for (int i = 0; i < (int)v.size(); i++) {
+    cout << v[i] << " ";
+}
+
+// Range-based (preferred)
+for (int x : v) {
+    cout << x << " ";
+}
+```
+
+<Warning>
+`v.size()` returns an **unsigned** integer. Comparing `i < v.size()` where `i` is a signed `int` can cause subtle bugs when `v` is empty (`v.size() - 1` wraps around to a huge number). Cast to `int` or use `(int)v.size()`.
+</Warning>
+
+## While Loops
+
+```cpp
+int n;
+cin >> n;
+
+while (n > 0) {
+    cout << n % 10; // print last digit
+    n /= 10;        // remove last digit
+}
+```
+
+### do-while
+
+When you need the loop body to execute at least once:
+
+```cpp
+int n;
+do {
+    cin >> n;
+} while (n < 1 || n > 100); // keep reading until valid
+```
+
+## Nested Loops
+
+Many problems require nested loops. Here's a classic pattern — printing a multiplication table:
+
+```cpp
+for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= n; j++) {
+        cout << i * j << "\t";
+    }
+    cout << "\n";
+}
+```
+
+<Note>
+The time complexity of nested loops is multiplicative. Two nested loops over $N$ elements give $O(N^2)$. For $N = 10^5$, that's $10^{10}$ operations — far too slow! Always check constraints before using nested loops.
+</Note>
+
+## Break and Continue
+
+```cpp
+// break: exit the loop entirely
+for (int i = 0; i < n; i++) {
+    if (arr[i] == target) {
+        cout << "Found at index " << i << "\n";
+        break;
+    }
+}
+
+// continue: skip to the next iteration
+for (int i = 0; i < n; i++) {
+    if (arr[i] < 0) continue; // skip negative numbers
+    sum += arr[i];
+}
+```
+
+## Common Patterns
+
+### Counting Occurrences
+
+```cpp
+int count = 0;
+for (int x : v) {
+    if (x == target) count++;
+}
+```
+
+### Finding Maximum / Minimum
+
+```cpp
+int mx = INT_MIN, mn = INT_MAX;
+for (int x : v) {
+    mx = max(mx, x);
+    mn = min(mn, x);
+}
+```
+
+<Spoiler title="Alternative: Using STL">
+You can also use `*max_element` and `*min_element`:
+
+```cpp
+int mx = *max_element(v.begin(), v.end());
+int mn = *min_element(v.begin(), v.end());
+```
+
+These are cleaner but do the same $O(N)$ traversal under the hood.
+</Spoiler>
+
+### Checking a Condition Over All Elements
+
+```cpp
+bool allPositive = true;
+for (int x : v) {
+    if (x <= 0) {
+        allPositive = false;
+        break;
+    }
+}
+```
+
+## Practice Problems
+
+<Problems />

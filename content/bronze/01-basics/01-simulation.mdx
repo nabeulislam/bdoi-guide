@@ -1,0 +1,163 @@
+---
+title: "Simulation"
+order: 1
+difficulty: "Bronze"
+category: "Basics"
+description: "Learn to solve problems by directly simulating the process described in the problem statement, step by step."
+problems:
+  - name: "Shell Game"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=891"
+    difficulty: "Easy"
+  - name: "The Bovine Shuffle"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=760"
+    difficulty: "Medium"
+  - name: "Mixing Milk"
+    url: "http://www.usaco.org/index.php?page=viewproblem2&cpid=855"
+    difficulty: "Easy"
+---
+
+Simulation problems are often the first type you encounter in competitive programming. The idea is simple: **read the problem carefully and do exactly what it says**, step by step.
+
+## What is Simulation?
+
+A simulation problem gives you a clear set of rules or instructions and asks you to determine the outcome after applying those rules. There's usually no clever trick — you just implement the process faithfully.
+
+<Info>
+Simulation is not about finding an elegant mathematical formula. It's about translating a real-world (or game-world) process into code. Accuracy and careful reading are more important than algorithmic knowledge here.
+</Info>
+
+## Example: Rotating an Array
+
+**Problem**: Given an array of $N$ elements and a number $K$, rotate the array to the right by $K$ positions.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int n, k;
+    cin >> n >> k;
+    
+    vector<int> a(n);
+    for (auto &x : a) cin >> x;
+    
+    k %= n; // handle k > n
+    
+    // Simulate: move last k elements to front
+    vector<int> result(n);
+    for (int i = 0; i < n; i++) {
+        result[(i + k) % n] = a[i];
+    }
+    
+    for (int x : result) cout << x << " ";
+    cout << "\n";
+    
+    return 0;
+}
+```
+
+## Step-by-Step Approach
+
+1. **Read the problem carefully** — twice if needed. Understand every rule.
+2. **Identify what changes each step** — what data structures represent the state?
+3. **Implement each step** exactly as described.
+4. **Test with the examples** before submitting.
+
+## Example: Card Game Simulation
+
+**Problem**: Two players each have a stack of cards. Each round, they reveal their top card. The player with the higher card takes both cards (winner's card first, then loser's) and puts them at the bottom of their stack. The game ends when one player runs out of cards or after $10^6$ rounds.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    queue<int> p1, p2;
+    for (int i = 0; i < n; i++) {
+        int x; cin >> x;
+        p1.push(x);
+    }
+    for (int i = 0; i < n; i++) {
+        int x; cin >> x;
+        p2.push(x);
+    }
+    
+    int rounds = 0;
+    while (!p1.empty() && !p2.empty() && rounds < 1000000) {
+        int c1 = p1.front(); p1.pop();
+        int c2 = p2.front(); p2.pop();
+        
+        if (c1 > c2) {
+            p1.push(c1);
+            p1.push(c2);
+        } else {
+            p2.push(c2);
+            p2.push(c1);
+        }
+        rounds++;
+    }
+    
+    if (p1.empty()) cout << "Player 2 wins\n";
+    else if (p2.empty()) cout << "Player 1 wins\n";
+    else cout << "Draw\n";
+    
+    return 0;
+}
+```
+
+<Warning>
+Always check if the simulation might run forever! Many problems include a maximum number of steps or guarantee termination, but if they don't, you need to detect cycles or set an upper bound.
+</Warning>
+
+## Common Simulation Patterns
+
+### Grid-Based Simulation
+
+Moving an entity on a 2D grid based on commands:
+
+```cpp
+int x = 0, y = 0;
+string moves;
+cin >> moves;
+
+for (char c : moves) {
+    if (c == 'U') y++;
+    else if (c == 'D') y--;
+    else if (c == 'L') x--;
+    else if (c == 'R') x++;
+}
+
+cout << x << " " << y << "\n";
+```
+
+### Time-Based Simulation
+
+Processing events in chronological order:
+
+```cpp
+vector<pair<int, string>> events; // {time, action}
+sort(events.begin(), events.end());
+
+for (auto &[time, action] : events) {
+    // process each event in order
+}
+```
+
+<Spoiler title="Tip: When to NOT simulate">
+Sometimes a simulation problem has constraints like $N \leq 10^{18}$, which means you **cannot** simulate every step. In such cases, look for:
+- **Mathematical patterns** or formulas
+- **Cycles** that repeat (detect the cycle, then skip ahead)
+- **Matrix exponentiation** for linear recurrences
+
+But at the Bronze level, the constraints usually allow direct simulation.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

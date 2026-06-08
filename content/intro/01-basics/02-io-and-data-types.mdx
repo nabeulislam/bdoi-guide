@@ -1,0 +1,167 @@
+---
+title: "I/O and Data Types"
+order: 2
+difficulty: "Intro"
+category: "Getting Started"
+description: "Learn how to read input, write output, and choose the right data types for competitive programming."
+problems:
+  - name: "Watermelon"
+    url: "https://codeforces.com/problemset/problem/4/A"
+    difficulty: "Easy"
+  - name: "Way Too Long Words"
+    url: "https://codeforces.com/problemset/problem/71/A"
+    difficulty: "Easy"
+  - name: "Team"
+    url: "https://codeforces.com/problemset/problem/231/A"
+    difficulty: "Easy"
+---
+
+Before you can solve any problem, you need to know how to **read input** and **write output** efficiently. This module covers the essentials of I/O in C++ and helps you pick the correct data types.
+
+## Fast I/O
+
+In competitive programming, slow I/O can cause Time Limit Exceeded (TLE) even when your algorithm is correct. Always include this line at the top of your `main()`:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    // your code here
+    return 0;
+}
+```
+
+<Info>
+`ios_base::sync_with_stdio(false)` decouples C++ streams from C streams, making `cin`/`cout` much faster. `cin.tie(NULL)` prevents unnecessary flushing of `cout` before each `cin`.
+</Info>
+
+## Reading Input
+
+### Single Values
+
+```cpp
+int n;
+cin >> n;
+
+string s;
+cin >> s; // reads a single word (stops at whitespace)
+```
+
+### Multiple Values on One Line
+
+```cpp
+int a, b, c;
+cin >> a >> b >> c;
+```
+
+### Reading an Entire Line
+
+```cpp
+string line;
+getline(cin, line); // reads until newline
+```
+
+<Warning>
+If you use `cin >> n` followed by `getline(cin, line)`, the `getline` will read the leftover newline character. Add `cin.ignore()` between them to fix this.
+</Warning>
+
+### Reading Until End of File
+
+```cpp
+int x;
+while (cin >> x) {
+    // process x
+}
+```
+
+## Writing Output
+
+```cpp
+cout << "Hello" << endl;   // with newline + flush
+cout << "Hello\n";          // with newline, no flush (faster!)
+```
+
+<Note>
+Prefer `"\n"` over `endl` in competitive programming. `endl` forces a buffer flush which is slower when printing millions of lines.
+</Note>
+
+## Data Types
+
+Choosing the right data type is critical. Here's what you need to know:
+
+| Type | Size | Range | When to Use |
+|------|------|-------|-------------|
+| `int` | 4 bytes | ±2.1 × 10⁹ | Most problems |
+| `long long` | 8 bytes | ±9.2 × 10¹⁸ | When values exceed 2 × 10⁹ |
+| `double` | 8 bytes | ~15 decimal digits | Floating-point math |
+| `char` | 1 byte | -128 to 127 | Single characters |
+| `bool` | 1 byte | true/false | Flags |
+
+### When to Use `long long`
+
+```cpp
+// WRONG: overflow!
+int a = 1000000;
+int b = a * a; // -727379968 (overflow)
+
+// CORRECT
+long long a = 1000000;
+long long b = a * a; // 1000000000000
+```
+
+<Warning>
+A common beginner mistake: if a problem says $N \leq 10^5$ and asks for $\sum N_i^2$, the answer can reach $10^{10}$, which overflows `int`. Always think about the **maximum possible result**, not just the input size.
+</Warning>
+
+## Arrays and Vectors
+
+```cpp
+// Fixed-size array
+int arr[100005]; // slightly larger than needed
+
+// Dynamic array (preferred)
+vector<int> v(n);
+for (int i = 0; i < n; i++) {
+    cin >> v[i];
+}
+```
+
+<Spoiler title="Pro Tip: Reading a vector in one loop">
+You can combine reading and processing:
+
+```cpp
+vector<int> v(n);
+for (auto &x : v) cin >> x;
+```
+
+This is concise and idiomatic C++ for competitive programming.
+</Spoiler>
+
+## Common I/O Patterns
+
+### Fixed Number of Test Cases
+
+```cpp
+int t;
+cin >> t;
+while (t--) {
+    // solve each test case
+}
+```
+
+### Reading Until a Sentinel Value
+
+```cpp
+int x;
+while (cin >> x && x != 0) {
+    // process x
+}
+```
+
+## Practice Problems
+
+<Problems />

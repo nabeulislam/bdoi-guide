@@ -1,0 +1,204 @@
+---
+title: "Advanced DP"
+order: 2
+difficulty: "Platinum"
+category: "Advanced Techniques"
+description: "Master bitmask DP, digit DP, and DP on trees — techniques that unlock a new class of problems."
+problems:
+  - name: "Hamiltonian Flights"
+    url: "https://cses.fi/problemset/task/1690"
+    difficulty: "Hard"
+  - name: "Counting Numbers"
+    url: "https://cses.fi/problemset/task/2220"
+    difficulty: "Hard"
+  - name: "Tree Distances I"
+    url: "https://cses.fi/problemset/task/1132"
+    difficulty: "Hard"
+---
+
+Building on the DP fundamentals, this module covers three advanced techniques that are essential for Platinum-level competitions.
+
+## Bitmask DP
+
+When the state involves a **subset** of elements (typically $N \leq 20$), represent the subset as a bitmask — an integer where the $i$-th bit indicates whether element $i$ is included.
+
+### Traveling Salesman Problem (TSP)
+
+Find the shortest path that visits every city exactly once and returns to the start.
+
+**State**: $dp[\text{mask}][i]$ = minimum cost to visit the cities in `mask`, ending at city $i$.
+
+```cpp
+int n;
+int dist[20][20];
+int dp[1 << 20][20];
+
+void solve() {
+    cin >> n;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> dist[i][j];
+    
+    memset(dp, 0x3f, sizeof(dp)); // fill with large value
+    dp[1][0] = 0; // start at city 0
+    
+    for (int mask = 1; mask < (1 << n); mask++) {
+        for (int u = 0; u < n; u++) {
+            if (!(mask & (1 << u))) continue; // u not in mask
+            if (dp[mask][u] >= 0x3f3f3f3f) continue;
+            
+            for (int v = 0; v < n; v++) {
+                if (mask & (1 << v)) continue; // v already visited
+                int newMask = mask | (1 << v);
+                dp[newMask][v] = min(dp[newMask][v], dp[mask][u] + dist[u][v]);
+            }
+        }
+    }
+    
+    int fullMask = (1 << n) - 1;
+    int ans = INT_MAX;
+    for (int u = 0; u < n; u++) {
+        ans = min(ans, dp[fullMask][u] + dist[u][0]);
+    }
+    cout << ans << "\n";
+}
+```
+
+<Info>
+The complexity is $O(2^N \cdot N^2)$. With $N = 20$, that's about $4 \times 10^8$ — tight but often acceptable. For $N \leq 15$, it's very comfortable.
+</Info>
+
+### Common Bitmask Operations
+
+```cpp
+// Check if bit i is set
+bool isSet = (mask >> i) & 1;
+
+// Set bit i
+mask |= (1 << i);
+
+// Clear bit i
+mask &= ~(1 << i);
+
+// Toggle bit i
+mask ^= (1 << i);
+
+// Count set bits
+int count = __builtin_popcount(mask);
+
+// Iterate over all subsets of mask
+for (int sub = mask; sub > 0; sub = (sub - 1) & mask) {
+    // process subset 'sub'
+}
+```
+
+## Digit DP
+
+Digit DP counts numbers in a range $[L, R]$ that satisfy some property related to their digits. The key idea is to process digits from most significant to least significant, tracking whether we're still "tight" (bounded by the limit).
+
+### Count numbers from 1 to N with no adjacent equal digits
+
+```cpp
+string num;
+int dp[20][10][2]; // [position][last digit][is_tight]
+// -1 means not computed
+
+int solve(int pos, int last, bool tight) {
+    if (pos == (int)num.size()) return 1;
+    if (dp[pos][last][tight] != -1) return dp[pos][last][tight];
+    
+    int limit = tight ? (num[pos] - '0') : 9;
+    int result = 0;
+    
+    for (int digit = 0; digit <= limit; digit++) {
+        if (digit == last) continue; // no adjacent equal digits
+        result += solve(pos + 1, digit, tight && (digit == limit));
+    }
+    
+    return dp[pos][last][tight] = result;
+}
+
+int main() {
+    long long n;
+    cin >> n;
+    num = to_string(n);
+    memset(dp, -1, sizeof(dp));
+    // Start with last=-1 (no previous digit), not tight initially
+    // Need to handle leading zeros carefully
+    cout << solve(0, -1, true) << "\n";
+}
+```
+
+<Warning>
+Digit DP requires careful handling of **leading zeros**. A number like "007" is actually "7", and leading zeros shouldn't be treated as real digits. Add a boolean `started` parameter or treat the first non-zero digit specially.
+</Warning>
+
+### Counting Numbers in a Range
+
+To count valid numbers in $[L, R]$: compute $f(R) - f(L-1)$, where $f(N)$ counts valid numbers from $0$ to $N$.
+
+## DP on Trees
+
+### Subtree DP
+
+Process subtrees bottom-up. The DP value of a node depends on the DP values of its children.
+
+**Example**: Find the size of each subtree.
+
+```cpp
+vector<int> adj[MAXN];
+int sz[MAXN];
+
+void dfs(int u, int parent) {
+    sz[u] = 1;
+    for (int v : adj[u]) {
+        if (v == parent) continue;
+        dfs(v, u);
+        sz[u] += sz[v];
+    }
+}
+```
+
+### Rerooting Technique
+
+Some tree DP problems ask for the answer at **every** node, not just the root. Computing DP from scratch for each root would be $O(N^2)$. The **rerooting technique** does it in $O(N)$:
+
+1. First DFS: compute answer with node 1 as root.
+2. Second DFS: "re-root" — when moving from parent to child, adjust the answer.
+
+```cpp
+long long down[MAXN], up[MAXN]; // down: from subtree, up: from rest
+
+void dfs1(int u, int parent) {
+    down[u] = 0;
+    for (int v : adj[u]) {
+        if (v == parent) continue;
+        dfs1(v, u);
+        down[u] += down[v] + sz[v]; // sum of distances in subtree
+    }
+}
+
+void dfs2(int u, int parent, int n) {
+    for (int v : adj[u]) {
+        if (v == parent) continue;
+        // When rerooting from u to v:
+        // v's subtree gets closer by 1 (sz[v] nodes)
+        // rest of tree gets farther by 1 (n - sz[v] nodes)
+        up[v] = (down[u] - down[v] - sz[v]) + up[u] + (n - sz[v]);
+        dfs2(v, u, n);
+    }
+}
+```
+
+<Spoiler title="Tree DP Problem-Solving Framework">
+1. **Root the tree** — Pick any node as root (usually node 1).
+2. **Define the state** — What information does each node store?
+3. **DFS from leaves to root** — Compute each node's value from its children.
+4. **If needed, re-root** — Second DFS to compute answers for all roots.
+
+Common states include: subtree size, maximum depth, number of paths, sum of distances.
+</Spoiler>
+
+## Practice Problems
+
+<Problems />

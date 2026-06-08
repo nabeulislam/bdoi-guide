@@ -1,0 +1,95 @@
+---
+title: "Contributing to BdOI Guide"
+order: 4
+difficulty: "Intro"
+category: "Community"
+description: "Learn how to contribute articles, fix typos, and add new problems to the BdOI Guide."
+---
+
+Welcome to the **BdOI Guide**! This project is open-source and built by the community. We highly encourage everyone—from past Olympiad participants to current students—to contribute and help improve the learning experience for future Bangladeshi competitive programmers.
+
+## How to Contribute
+
+The BdOI Guide is built using **Next.js**, **Tailwind CSS**, and **MDX** (Markdown with JSX components).
+
+### 1. Fork the Repository
+Start by forking the [BdOI Guide repository](https://github.com/nabeul/bdoi-guide) on GitHub. Once you have your own copy, clone it to your local machine:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/bdoi-guide.git
+cd bdoi-guide
+```
+
+### 2. Run Locally
+Install the dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+You can now preview your changes at `http://localhost:3000`.
+
+## Writing Content
+
+### Curriculum Structure
+Similar to the USACO Guide, the BdOI Guide is structured into three levels:
+1. **Tracks** (e.g., Intro, Bronze, Silver, Gold, Platinum): Represent the overall division or difficulty level. All articles must be placed in their respective track folder (e.g., `content/bronze`).
+2. **Categories**: Within a track, topics are grouped into logical categories (e.g., "Sorting & Searching", "Graphs", "Dynamic Programming"). You define this using the `category` field in the file's frontmatter.
+3. **Modules**: The actual `.mdx` files representing individual topics.
+
+By defining the `category` in the frontmatter, the system will automatically group your module alongside related topics in both the sidebar and the track's landing page.
+
+### Markdown and Frontmatter
+Each article is an `.mdx` file. At the very top of the file, you must include a YAML frontmatter block that tells the system about the page:
+
+```yaml
+---
+title: "Your Article Title"
+order: 1
+difficulty: "Bronze"
+category: "Basics"
+description: "A short summary of what this article covers."
+problems:
+  - name: "Problem Name"
+    url: "https://codeforces.com/..."
+    difficulty: "Easy"
+---
+```
+
+### Formatting Rules
+
+- **Math**: We support LaTeX for rendering mathematics. Use `$` for inline math ($O(N \log N)$) and `$$` for block math.
+- **Code Blocks**: Use standard triple backticks for code snippets. Always specify the language (e.g., ` ```cpp `).
+- **Callouts**: Use `<Info>`, `<Note>`, `<Warning>`, or `<Callout>` components to highlight important context.
+
+```mdx
+<Info>
+This is an important tip for competitive programming!
+</Info>
+
+<Warning>
+Watch out for integer overflow here! Use `long long`.
+</Warning>
+```
+
+- **Spoilers**: Use the `<Spoiler>` component for hints or solutions that you want hidden by default until the user clicks to reveal them.
+
+```mdx
+<Spoiler title="View Hint">
+Consider using a segment tree to query the range maximum.
+</Spoiler>
+```
+
+## Adding Problems
+The `problems` array in the frontmatter automatically generates a practice problem table at the bottom of the article. When adding problems:
+1. Ensure the link is direct.
+2. Provide an accurate difficulty estimate ("Easy", "Normal", "Hard").
+3. Prioritize high-quality problems from Codeforces, CSES, USACO, or LightOJ.
+
+## Submitting a Pull Request
+Once you are happy with your changes:
+1. Commit your changes with a clear message (e.g., `Add new segment tree examples`).
+2. Push the branch to your fork.
+3. Open a Pull Request against the main repository.
+
+Our maintainers will review your PR, suggest any necessary edits, and merge it! Thank you for helping the community!

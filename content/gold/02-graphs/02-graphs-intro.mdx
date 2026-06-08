@@ -1,0 +1,213 @@
+---
+title: "Graphs: BFS and DFS"
+order: 2
+difficulty: "Gold"
+category: "Graphs"
+description: "Represent graphs and traverse them using BFS and DFS — the two most fundamental graph algorithms."
+problems:
+  - name: "Building Roads"
+    url: "https://cses.fi/problemset/task/1666"
+    difficulty: "Easy"
+  - name: "Message Route"
+    url: "https://cses.fi/problemset/task/1667"
+    difficulty: "Medium"
+  - name: "Labyrinth"
+    url: "https://cses.fi/problemset/task/1193"
+    difficulty: "Medium"
+---
+
+Graphs are everywhere in competitive programming. This module covers how to represent graphs and the two fundamental traversal algorithms: **BFS** and **DFS**.
+
+## Graph Representation
+
+### Adjacency List (Preferred)
+
+```cpp
+int n, m; // n vertices, m edges
+cin >> n >> m;
+
+vector<vector<int>> adj(n + 1); // 1-indexed
+
+for (int i = 0; i < m; i++) {
+    int u, v;
+    cin >> u >> v;
+    adj[u].push_back(v);
+    adj[v].push_back(u); // undirected graph
+}
+```
+
+<Info>
+Always use adjacency lists unless the problem specifically needs an adjacency matrix. Adjacency lists use $O(N + M)$ space vs $O(N^2)$ for matrices, and allow iterating over neighbors in $O(\text{degree})$.
+</Info>
+
+### Adjacency Matrix
+
+Only use when $N \leq 2000$ or you need $O(1)$ edge queries:
+
+```cpp
+vector<vector<bool>> adj(n + 1, vector<bool>(n + 1, false));
+adj[u][v] = adj[v][u] = true;
+```
+
+## Depth-First Search (DFS)
+
+DFS explores as deep as possible along each branch before backtracking.
+
+```cpp
+vector<bool> visited(n + 1, false);
+
+void dfs(int u) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v);
+        }
+    }
+}
+```
+
+### Counting Connected Components
+
+```cpp
+int components = 0;
+for (int i = 1; i <= n; i++) {
+    if (!visited[i]) {
+        dfs(i);
+        components++;
+    }
+}
+```
+
+<Warning>
+For very large graphs ($N > 10^5$), recursive DFS might cause a **stack overflow**. Use iterative DFS with an explicit stack instead:
+
+```cpp
+void dfs_iterative(int start) {
+    stack<int> st;
+    st.push(start);
+    visited[start] = true;
+    while (!st.empty()) {
+        int u = st.top(); st.pop();
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                st.push(v);
+            }
+        }
+    }
+}
+```
+</Warning>
+
+## Breadth-First Search (BFS)
+
+BFS explores all vertices at distance $d$ before vertices at distance $d+1$. It finds the **shortest path** in unweighted graphs.
+
+```cpp
+vector<int> dist(n + 1, -1);
+
+void bfs(int start) {
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        
+        for (int v : adj[u]) {
+            if (dist[v] == -1) { // not visited
+                dist[v] = dist[u] + 1;
+                q.push(v);
+            }
+        }
+    }
+}
+```
+
+### Finding the Shortest Path
+
+To reconstruct the actual path, store the parent of each vertex:
+
+```cpp
+vector<int> dist(n + 1, -1), parent(n + 1, -1);
+
+void bfs(int start) {
+    queue<int> q;
+    q.push(start);
+    dist[start] = 0;
+    
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : adj[u]) {
+            if (dist[v] == -1) {
+                dist[v] = dist[u] + 1;
+                parent[v] = u;
+                q.push(v);
+            }
+        }
+    }
+}
+
+// Reconstruct path from start to end
+vector<int> getPath(int end) {
+    vector<int> path;
+    for (int v = end; v != -1; v = parent[v]) {
+        path.push_back(v);
+    }
+    reverse(path.begin(), path.end());
+    return path;
+}
+```
+
+<Note>
+BFS gives shortest paths in **unweighted** graphs (or graphs where all edges have equal weight). For weighted graphs, use Dijkstra's algorithm (next module).
+</Note>
+
+## Grid Graphs
+
+Many BFS/DFS problems are on 2D grids. Treat each cell as a node with up to 4 neighbors:
+
+```cpp
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+
+void bfs_grid(int sr, int sc, vector<vector<char>> &grid) {
+    int n = grid.size(), m = grid[0].size();
+    vector<vector<int>> dist(n, vector<int>(m, -1));
+    
+    queue<pair<int,int>> q;
+    q.push({sr, sc});
+    dist[sr][sc] = 0;
+    
+    while (!q.empty()) {
+        auto [r, c] = q.front(); q.pop();
+        
+        for (int d = 0; d < 4; d++) {
+            int nr = r + dx[d], nc = c + dy[d];
+            if (nr >= 0 && nr < n && nc >= 0 && nc < m 
+                && grid[nr][nc] != '#' && dist[nr][nc] == -1) {
+                dist[nr][nc] = dist[r][c] + 1;
+                q.push({nr, nc});
+            }
+        }
+    }
+}
+```
+
+<Spoiler title="DFS vs BFS: When to use which?">
+| Use Case | Algorithm |
+|---|---|
+| Shortest path (unweighted) | BFS |
+| Connected components | Either |
+| Cycle detection | DFS |
+| Topological sort | DFS |
+| Flood fill | Either |
+| Bipartiteness check | BFS |
+
+In general, BFS is better for shortest paths, DFS is better for exploring structure (cycles, components, topological ordering).
+</Spoiler>
+
+## Practice Problems
+
+<Problems />
