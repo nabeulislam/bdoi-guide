@@ -7,6 +7,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeHighlight from 'rehype-highlight';
 import 'katex/dist/katex.min.css';
 import { Problem, Problems } from '@/components/mdx/Problem';
+import { Resources } from '@/components/mdx/Resource';
 import { Info, Warning, Note, Callout } from '@/components/mdx/Callout';
 import { Spoiler } from '@/components/mdx/Spoiler';
 import Link from 'next/link';
@@ -91,6 +92,10 @@ export default async function Page({ params }: { params: { track: string; slug: 
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-10 leading-relaxed border-l-4 border-brand-500 pl-4 py-1">
           {page.frontmatter.description}
         </p>
+      )}
+
+      {page.frontmatter.resources && (
+        <Resources resources={page.frontmatter.resources} />
       )}
 
       <div className="prose prose-lg dark:prose-invert prose-brand max-w-none">

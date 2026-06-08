@@ -10,12 +10,19 @@ export interface Problem {
   difficulty: string;
 }
 
+export interface Resource {
+  name: string;
+  url: string;
+  type: string;
+}
+
 export interface Frontmatter {
   title: string;
   order?: number; // Kept for backwards compatibility but we rely on filename prefixes now
   difficulty: string;
   description: string;
   problems?: Problem[];
+  resources?: Resource[];
 }
 
 export interface ContentPage {

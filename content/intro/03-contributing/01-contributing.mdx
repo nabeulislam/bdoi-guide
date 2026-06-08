@@ -45,16 +45,24 @@ Each article is an `.mdx` file. At the very top of the file, you must include a 
 ```yaml
 ---
 title: "Your Article Title"
-order: 1
 difficulty: "Bronze"
-category: "Basics"
 description: "A short summary of what this article covers."
+resources:
+  - name: "CP-Algorithms: Segment Tree"
+    url: "https://cp-algorithms.com/data_structures/segment_tree.html"
+    type: "Article"
+  - name: "Errichto: Segment Trees"
+    url: "https://youtube.com/watch?v=..."
+    type: "Video"
 problems:
   - name: "Problem Name"
     url: "https://codeforces.com/..."
     difficulty: "Easy"
 ---
 ```
+
+## Adding Resources
+Just like the USACO Guide, we want to point students to external tutorials, videos, or books *before* diving into the module. Use the `resources` array in the frontmatter. Valid resource types are `Video`, `Article`, and `Book`. They will automatically render as a stylized list at the top of the article.
 
 ### Formatting Rules
 
