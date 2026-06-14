@@ -10,6 +10,7 @@ import { Problem, Problems } from '@/components/mdx/Problem';
 import { Resources } from '@/components/mdx/Resource';
 import { Info, Warning, Note, Callout } from '@/components/mdx/Callout';
 import { Spoiler } from '@/components/mdx/Spoiler';
+import { Countdown } from '@/components/mdx/Countdown';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -46,6 +47,7 @@ const TRACK_LABELS: Record<string, string> = {
   silver: 'Silver',
   gold: 'Gold',
   platinum: 'Platinum',
+  contests: 'Contests',
 };
 
 export default async function Page({ params }: { params: { track: string; slug: string } }) {
@@ -67,6 +69,7 @@ export default async function Page({ params }: { params: { track: string; slug: 
     Note,
     Callout,
     Spoiler,
+    Countdown,
   };
 
   return (

@@ -47,7 +47,7 @@ export interface TrackData {
   pages: ContentPage[]; // Flat list of pages for easy adjacent navigation
 }
 
-export const TRACK_ORDER = ['intro', 'bronze', 'silver', 'gold', 'platinum'];
+export const TRACK_ORDER = ['intro', 'bronze', 'silver', 'gold', 'platinum', 'contests'];
 
 export function getAllTracks(): string[] {
   if (!fs.existsSync(contentDir)) return [];

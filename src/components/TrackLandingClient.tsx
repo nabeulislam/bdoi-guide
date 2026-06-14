@@ -26,6 +26,10 @@ const TRACK_META: Record<string, { bg: string; description: string }> = {
     bg: 'bg-blue-700 dark:bg-blue-900',
     description: 'Advanced data structures and techniques for the hardest problems.',
   },
+  contests: {
+    bg: 'bg-purple-600 dark:bg-purple-800',
+    description: 'Track upcoming contests and find unofficial practice contests.',
+  },
 };
 
 interface TrackLandingClientProps {

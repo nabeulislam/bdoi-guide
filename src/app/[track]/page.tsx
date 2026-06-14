@@ -3,7 +3,7 @@ import { TrackLandingClient } from '@/components/TrackLandingClient';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
-const TRACK_ORDER = ['intro', 'bronze', 'silver', 'gold', 'platinum'];
+const TRACK_ORDER = ['intro', 'bronze', 'silver', 'gold', 'platinum', 'contests'];
 
 export async function generateStaticParams() {
   return TRACK_ORDER.map((track) => ({

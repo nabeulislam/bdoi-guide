@@ -122,12 +122,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
               currentTrack.track === 'bronze' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
               currentTrack.track === 'silver' ? 'bg-slate-100 text-slate-700 dark:bg-slate-800/50 dark:text-slate-400' :
               currentTrack.track === 'gold' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+              currentTrack.track === 'contests' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
               'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
             }`}>
               {currentTrack.track === 'intro' ? '🌱' :
                currentTrack.track === 'bronze' ? '🥉' :
                currentTrack.track === 'silver' ? '🥈' :
-               currentTrack.track === 'gold' ? '🥇' : '💎'}
+               currentTrack.track === 'gold' ? '🥇' :
+               currentTrack.track === 'contests' ? '🏆' : '💎'}
             </div>
             <span className="font-bold text-sm capitalize text-gray-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{currentTrack.track}</span>
           </div>
@@ -147,7 +149,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
                   {t.track === 'intro' ? '🌱' :
                    t.track === 'bronze' ? '🥉' :
                    t.track === 'silver' ? '🥈' :
-                   t.track === 'gold' ? '🥇' : '💎'}
+                   t.track === 'gold' ? '🥇' :
+                   t.track === 'contests' ? '🏆' : '💎'}
                 </span>
                 <span className="capitalize">{t.track}</span>
               </Link>
