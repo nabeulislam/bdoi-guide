@@ -1,5 +1,6 @@
 ---
 title: "Contributing to BdOI Guide"
+author: "Nabeul"
 order: 4
 difficulty: "Intro"
 category: "Community"
@@ -45,6 +46,7 @@ Each article is an `.mdx` file. At the very top of the file, you must include a 
 ```yaml
 ---
 title: "Your Article Title"
+author: ["Author A", "Author B"]
 difficulty: "Bronze"
 description: "A short summary of what this article covers."
 resources:
@@ -55,9 +57,17 @@ resources:
     url: "https://youtube.com/watch?v=..."
     type: "Video"
 problems:
-  - name: "Problem Name"
+  - name: "Focus Problem Name"
     url: "https://codeforces.com/..."
+    source: "Codeforces"
     difficulty: "Easy"
+    isStarred: true
+    tags: ["Segment Tree", "Math"]
+    solution: "https://codeforces.com/blog/entry/..."
+  - name: "Regular Problem Name"
+    url: "https://cses.fi/..."
+    source: "CSES"
+    difficulty: "Normal"
 ---
 ```
 
@@ -89,10 +99,14 @@ Consider using a segment tree to query the range maximum.
 ```
 
 ## Adding Problems
-The `problems` array in the frontmatter automatically generates a practice problem table at the bottom of the article. When adding problems:
-1. Ensure the link is direct.
-2. Provide an accurate difficulty estimate ("Easy", "Normal", "Hard").
-3. Prioritize high-quality problems from Codeforces, CSES, USACO, or LightOJ.
+The `problems` array in the frontmatter automatically generates USACO Guide style problem blocks at the bottom of your article. You **do not** need to write complicated MDX tags to render them—simply write proper YAML syntax at the top of your file!
+
+When adding problems:
+1. Ensure the `url` is direct.
+2. Provide an accurate `difficulty` estimate ("Easy", "Normal", "Hard").
+3. Include the `source` (e.g., Codeforces, USACO) and a list of `tags`.
+4. If available, provide a `solution` link pointing to an editorial.
+5. **Focus Problems**: If a problem is essential to understanding the module, add `isStarred: true`. The system will automatically extract it from the table and render it as a massive, distinct "Focus Problem" block right above the practice table.
 
 ## Submitting a Pull Request
 Once you are happy with your changes:

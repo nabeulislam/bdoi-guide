@@ -8,6 +8,20 @@ export interface Problem {
   name: string;
   url: string;
   difficulty: string;
+  source?: string;
+  tags?: string[];
+  solution?: string;
+  isStarred?: boolean;
+  category?: string;
+}
+
+export interface GlobalProblem extends Problem {
+  id: string;
+  track: string;
+  categoryName: string;
+  moduleSlug: string;
+  moduleName: string;
+  hasSolution: boolean;
 }
 
 export interface Resource {
@@ -18,6 +32,7 @@ export interface Resource {
 
 export interface Frontmatter {
   title: string;
+  author?: string | string[];
   order?: number; // Kept for backwards compatibility but we rely on filename prefixes now
   difficulty: string;
   description: string;
@@ -168,5 +183,66 @@ export function getAdjacentPages(track: string, currentSlug: string) {
   return {
     prev: currentIndex > 0 ? allPages[currentIndex - 1] : null,
     next: currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null,
+  };
+}
+
+export function generateProblemId(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+export function hasSolution(id: string): boolean {
+  const solutionsDir = path.join(process.cwd(), 'content', 'solutions');
+  if (!fs.existsSync(solutionsDir)) return false;
+  return fs.existsSync(path.join(solutionsDir, `${id}.mdx`)) || fs.existsSync(path.join(solutionsDir, `${id}.md`));
+}
+
+export function getAllProblems(): GlobalProblem[] {
+  const allTracks = getAllPages();
+  const problems: GlobalProblem[] = [];
+
+  for (const track of allTracks) {
+    for (const category of track.categories) {
+      for (const page of category.pages) {
+        if (page.frontmatter.problems && page.frontmatter.problems.length > 0) {
+          for (const prob of page.frontmatter.problems) {
+            const id = generateProblemId(prob.name);
+            problems.push({
+              ...prob,
+              id,
+              track: track.track,
+              categoryName: prob.category || category.name || 'Uncategorized',
+              moduleSlug: page.slug,
+              moduleName: page.frontmatter.title,
+              hasSolution: hasSolution(id),
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // Deduplicate by ID in case a problem appears in multiple modules (keep the first occurrence)
+  const uniqueProblems = Array.from(new Map(problems.map(p => [p.id, p])).values());
+  return uniqueProblems;
+}
+
+export function getSolutionById(id: string) {
+  const solutionsDir = path.join(process.cwd(), 'content', 'solutions');
+  if (!fs.existsSync(solutionsDir)) return null;
+  
+  const mdxPath = path.join(solutionsDir, `${id}.mdx`);
+  const mdPath = path.join(solutionsDir, `${id}.md`);
+  
+  let filePath = '';
+  if (fs.existsSync(mdxPath)) filePath = mdxPath;
+  else if (fs.existsSync(mdPath)) filePath = mdPath;
+  else return null;
+
+  const fileContent = fs.readFileSync(filePath, 'utf-8');
+  const { data, content } = matter(fileContent);
+
+  return {
+    frontmatter: data,
+    content,
   };
 }

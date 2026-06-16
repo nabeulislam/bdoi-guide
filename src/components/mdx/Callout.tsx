@@ -5,14 +5,14 @@ export const Callout: React.FC<{ children: React.ReactNode; type?: 'info' | 'war
   children, 
   type = 'info' 
 }) => {
-  let style = 'bg-blue-50 border-blue-200 text-blue-900 dark:bg-blue-950/40 dark:border-blue-900/50 dark:text-blue-200';
+  let style = 'bg-blue-950/40 border-blue-900/50 text-blue-200';
   let Icon = InfoIcon;
 
   if (type === 'warning') {
-    style = 'bg-amber-50 border-amber-200 text-amber-900 dark:bg-amber-950/40 dark:border-amber-900/50 dark:text-amber-200';
+    style = 'bg-amber-950/40 border-amber-900/50 text-amber-200';
     Icon = AlertTriangle;
   } else if (type === 'note') {
-    style = 'bg-brand-50 border-brand-200 text-brand-900 dark:bg-brand-950/40 dark:border-brand-900/50 dark:text-brand-200';
+    style = 'bg-brand-950/40 border-brand-900/50 text-brand-200';
     Icon = Lightbulb;
   }
 
@@ -31,3 +31,22 @@ export const Callout: React.FC<{ children: React.ReactNode; type?: 'info' | 'war
 export const Info: React.FC<{ children: React.ReactNode }> = ({ children }) => <Callout type="info">{children}</Callout>;
 export const Warning: React.FC<{ children: React.ReactNode }> = ({ children }) => <Callout type="warning">{children}</Callout>;
 export const Note: React.FC<{ children: React.ReactNode }> = ({ children }) => <Callout type="note">{children}</Callout>;
+
+export const JoinDiscord: React.FC = () => {
+  return (
+    <div className="my-8 p-6 rounded-xl bg-[#0f172a] border border-[#1e293b]">
+      <h3 className="text-xl font-semibold text-white mb-2">Join the BdOI Discord!</h3>
+      <p className="text-gray-400 text-sm mb-6">
+        Stuck on a problem, or don't understand a module? Join the official BdOI Discord and get help from other competitive programmers!
+      </p>
+      <a 
+        href="#" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="inline-block px-4 py-2 bg-[#1e293b] hover:bg-[#334155] text-gray-200 font-medium rounded-md transition-colors text-sm"
+      >
+        Join Discord
+      </a>
+    </div>
+  );
+};

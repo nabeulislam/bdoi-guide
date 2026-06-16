@@ -21,6 +21,7 @@
     "playwright": "^1.60.0",
     "react": "^18",
     "react-dom": "^18",
+    "rehype-external-links": "^3.0.0",
     "rehype-highlight": "^7.0.2",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",

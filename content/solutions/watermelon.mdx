@@ -1,0 +1,25 @@
+The problem asks if we can divide a watermelon of weight $W$ into two parts such that both parts have an even weight. Let the parts be $w_1$ and $w_2$. We know:
+
+1. $w_1 + w_2 = W$
+2. $w_1$ is even
+3. $w_2$ is even
+
+Since the sum of two even numbers is always even, $W$ **must be an even number**. However, there is one edge case: what if $W = 2$? The only way to split it into two positive integers is $1 + 1$, but $1$ is odd. So $W = 2$ is the only even number that does NOT work.
+
+<Solution title="C++ Official Implementation">
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int w;
+    cin >> w;
+    if (w % 2 == 0 && w > 2) {
+        cout << "YES\n";
+    } else {
+        cout << "NO\n";
+    }
+    return 0;
+}
+```
+</Solution>

@@ -59,30 +59,30 @@ export const TrackLandingClient: React.FC<TrackLandingClientProps> = ({ track, c
       </div>
 
       {/* Category-based module listing */}
-      <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 space-y-10">
+      <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 space-y-8">
         {categories.map((category) => (
           <div key={category.name}>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-200 dark:border-gray-800">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 pb-2 border-b border-gray-200 dark:border-gray-800 uppercase tracking-wider text-xs">
               {category.name}
             </h2>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {category.pages.map((page) => (
                 <Link
                   key={page.slug}
                   href={`/${track}/${page.slug}`}
-                  className="group flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-brand-400 dark:hover:border-brand-600 hover:bg-brand-50/50 dark:hover:bg-brand-900/10 transition-all cursor-pointer"
+                  className="group flex items-center justify-between p-4 rounded-xl border border-[#334155] bg-[#1e293b] hover:bg-[#334155] transition-colors cursor-pointer shadow-sm"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-base font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                    <p className="text-base font-bold text-gray-200 group-hover:text-brand-400 transition-colors">
                       {page.frontmatter.title}
                     </p>
                     {page.frontmatter.description && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
+                      <p className="text-sm text-gray-400 mt-1 line-clamp-1">
                         {page.frontmatter.description}
                       </p>
                     )}
                   </div>
-                  <ArrowRight size={16} className="text-gray-400 group-hover:text-brand-500 group-hover:translate-x-0.5 transition-all flex-shrink-0 ml-3" />
+                  <ArrowRight size={18} className="text-gray-500 group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0 ml-4" />
                 </Link>
               ))}
             </div>

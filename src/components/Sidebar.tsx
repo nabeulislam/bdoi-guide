@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { X, ChevronDown, ChevronRight } from 'lucide-react';
 import { TrackData } from '@/lib/content';
 
 interface SidebarProps {
@@ -98,8 +98,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
   const sidebarContent = (
     <div className="p-5 pb-10">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/" className="flex items-center gap-2.5 font-bold text-lg text-brand-600 dark:text-brand-400 hover:opacity-80 transition-opacity">
-          <BookOpen size={20} />
+        <Link href="/" className="flex items-center gap-2 font-bold text-lg text-brand-600 dark:text-brand-400 hover:opacity-80 transition-opacity">
+          <img src="/bdoi-logo.png" alt="BdOI" className="w-7 h-7 rounded-full" />
           BdOI Guide
         </Link>
         <button
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
       <div className="mb-6 relative" ref={trackDropdownRef}>
         <button
           onClick={() => setTrackDropdownOpen(!trackDropdownOpen)}
-          className="w-full flex items-center justify-between px-3 py-2.5 bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl hover:border-brand-300 dark:hover:border-brand-700 transition-colors cursor-pointer shadow-sm group"
+          className="w-full flex items-center justify-between px-3 py-2.5 bg-[#0f172a] border border-[#1e293b] rounded-xl hover:border-brand-700 transition-colors cursor-pointer shadow-sm group"
         >
           <div className="flex items-center gap-2.5">
             <div className={`w-6 h-6 rounded-md flex items-center justify-center text-xs ${
@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
         </button>
 
         {trackDropdownOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#111] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden py-1 animate-fade-in-up">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[#0f172a] border border-[#1e293b] rounded-xl shadow-xl z-50 overflow-hidden py-1 animate-fade-in-up">
             {tracks.map(t => (
               <Link
                 key={t.track}
@@ -155,6 +155,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
                 <span className="capitalize">{t.track}</span>
               </Link>
             ))}
+            <div className="my-1 border-t border-[#1e293b]"></div>
+            <Link
+              href="/problems"
+              onClick={() => setTrackDropdownOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer text-gray-700 dark:text-gray-300"
+            >
+              <span className="w-5 text-center text-xs opacity-80">🧩</span>
+              <span className="capitalize">Problems</span>
+            </Link>
           </div>
         )}
       </div>
@@ -209,7 +218,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="w-64 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-[#0a0a0a] min-h-screen overflow-y-auto hidden md:block">
+      <aside className="w-64 flex-shrink-0 border-r border-[#1e293b] bg-[#0f172a] min-h-screen overflow-y-auto hidden md:block">
         {sidebarContent}
       </aside>
 
@@ -219,7 +228,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ tracks, isOpen, onClose }) => 
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" onClick={onClose} />
           <aside 
             ref={sidebarRef}
-            className="absolute top-0 left-0 bottom-0 w-72 bg-white dark:bg-[#0a0a0a] border-r border-gray-200 dark:border-gray-800 overflow-y-auto animate-slide-in-left shadow-2xl"
+            className="absolute top-0 left-0 bottom-0 w-72 bg-[#0f172a] border-r border-[#1e293b] overflow-y-auto animate-slide-in-left shadow-2xl"
           >
             {sidebarContent}
           </aside>

@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Search } from '@/components/Search';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { ThemeProvider } from '@/lib/ThemeProvider';
 import { TrackData } from '@/lib/content';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -22,19 +20,19 @@ export const ClientLayout: React.FC<ClientLayoutProps> = ({ tracks, children }) 
   // Determine if we're on a module page (e.g., /bronze/simulation) vs track root (e.g., /bronze)
   const pathParts = pathname.split('/').filter(Boolean);
   const isModulePage = pathParts.length >= 2 && pathParts[0] !== 'roadmap';
-  const isTrackRoot = pathParts.length === 1 && ['intro', 'bronze', 'silver', 'gold', 'platinum', 'contests'].includes(pathParts[0]);
+  const isTrackRoot = pathParts.length === 1 && ['intro', 'bronze', 'silver', 'gold', 'platinum', 'contests', 'problems'].includes(pathParts[0]);
   
   // Sidebar only on module pages
   const showSidebar = isModulePage;
 
   return (
-    <ThemeProvider>
+    <>
       {showSidebar && (
         <Sidebar tracks={tracks} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       )}
       
       <div className="flex-1 flex flex-col min-h-screen max-h-screen overflow-y-auto relative">
-        <header className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 py-3 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 py-3 bg-[#0f172a]/95 backdrop-blur-md border-b border-[#1e293b]">
           <div className="flex items-center gap-3">
             {showSidebar && (
               <button
@@ -45,7 +43,8 @@ export const ClientLayout: React.FC<ClientLayoutProps> = ({ tracks, children }) 
                 <Menu size={18} />
               </button>
             )}
-            <Link href="/" className={`font-bold text-brand-600 dark:text-brand-400 text-sm hover:opacity-80 transition-opacity cursor-pointer ${showSidebar ? 'md:hidden' : ''}`}>
+            <Link href="/" className={`flex items-center gap-2 font-bold text-brand-600 dark:text-brand-400 text-sm hover:opacity-80 transition-opacity cursor-pointer ${showSidebar ? 'md:hidden' : ''}`}>
+              <img src="/bdoi-logo.png" alt="BdOI" className="w-6 h-6 rounded-full" />
               BdOI Guide
             </Link>
             
@@ -61,12 +60,17 @@ export const ClientLayout: React.FC<ClientLayoutProps> = ({ tracks, children }) 
                     {t.track}
                   </Link>
                 ))}
+                <Link
+                  href="/problems"
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${pathname.startsWith('/problems') ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'}`}
+                >
+                  Problems
+                </Link>
               </nav>
             )}
           </div>
           <div className="flex items-center gap-2">
             <Search />
-            <ThemeToggle />
           </div>
         </header>
         
@@ -76,6 +80,6 @@ export const ClientLayout: React.FC<ClientLayoutProps> = ({ tracks, children }) 
           </div>
         </main>
       </div>
-    </ThemeProvider>
+    </>
   );
 };

@@ -23,24 +23,8 @@ export default function RootLayout({
   const tracks = getAllPages();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('bdoi-theme');
-                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                  }
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body className={`${inter.className} antialiased bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 min-h-screen flex`}>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} antialiased bg-[#0f172a] text-gray-200 min-h-screen flex`}>
         <ClientLayout tracks={tracks}>
           {children}
         </ClientLayout>

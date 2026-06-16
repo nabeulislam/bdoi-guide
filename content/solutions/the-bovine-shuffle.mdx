@@ -1,0 +1,44 @@
+The problem asks us to reverse a shuffle process. We are given the final positions of the cows, and the shuffle array which dictates that the cow at position $i$ moves to position $A_i$.
+To reverse the shuffle, we must find where the cow currently at position $A_i$ came from—which is position $i$!
+
+We can maintain an array of the cows' IDs, and simply apply the reverse shuffle 3 times.
+
+<Solution title="C++ Official Solution">
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        a[i]--; // 0-index the positions
+    }
+    
+    vector<int> ids(n);
+    for (int i = 0; i < n; i++) {
+        cin >> ids[i];
+    }
+    
+    // We shuffle backwards 3 times
+    for (int i = 0; i < 3; i++) {
+        vector<int> prev(n);
+        for (int j = 0; j < n; j++) {
+            prev[j] = ids[a[j]];
+        }
+        ids = prev;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        cout << ids[i] << "\n";
+    }
+    
+    return 0;
+}
+```
+</Solution>

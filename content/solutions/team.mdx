@@ -1,0 +1,19 @@
+Just count how many people are sure about the solution. If the sum of the three variables is $\ge 2$, they will implement it.
+
+<Solution title="User Implementation in C++" author="Nabeul">
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n, ans = 0;
+    cin >> n;
+    while (n--) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        if (a + b + c >= 2) ans++;
+    }
+    cout << ans << "\n";
+}
+```
+</Solution>

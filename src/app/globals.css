@@ -3,24 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
-
-  .dark {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-
   html {
     scroll-behavior: smooth;
   }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
 }
 
 /* Custom selection colors */
@@ -123,16 +108,21 @@ body {
 
 /* Code block styling */
 .prose pre {
-  border-radius: 0.75rem !important;
-  border: 1px solid #e5e7eb !important;
-  padding: 1.25rem !important;
   font-size: 0.875rem !important;
   line-height: 1.7 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.prose pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
 }
 
 .dark .prose pre {
-  border-color: #1f2937 !important;
-  background: #111 !important;
+  background: transparent !important;
 }
 
 .prose code:not(pre code) {
