@@ -168,9 +168,6 @@ export const Problems: React.FC<{ problems?: ProblemProps[] }> = ({ problems }) 
   const focusProblems = problems.filter(p => p.isStarred);
   const regularProblems = problems.filter(p => !p.isStarred);
 
-  const hasSource = regularProblems.some(p => !!p.source);
-  const hasTags = regularProblems.some(p => !!p.tags && p.tags.length > 0);
-
   return (
     <div className="my-8">
       {/* Render Focus Problems as massive blocks above the table */}

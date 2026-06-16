@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Search, ExternalLink, Shuffle } from 'lucide-react';
 import { GlobalProblem } from '@/lib/content';

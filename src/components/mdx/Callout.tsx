@@ -37,7 +37,7 @@ export const JoinDiscord: React.FC = () => {
     <div className="my-8 p-6 rounded-xl bg-[#0f172a] border border-[#1e293b]">
       <h3 className="text-xl font-semibold text-white mb-2">Join the BdOI Discord!</h3>
       <p className="text-gray-400 text-sm mb-6">
-        Stuck on a problem, or don't understand a module? Join the official BdOI Discord and get help from other competitive programmers!
+        Stuck on a problem, or don&apos;t understand a module? Join the official BdOI Discord and get help from other competitive programmers!
       </p>
       <a 
         href="#" 

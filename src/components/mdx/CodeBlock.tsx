@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Check, Copy } from 'lucide-react';
+// No extra lucide imports needed right now
 
 export const CodeBlock: React.FC<React.HTMLAttributes<HTMLPreElement>> = ({ children, className, ...props }) => {
   const [isCopied, setIsCopied] = useState(false);

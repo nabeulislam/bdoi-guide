@@ -86,15 +86,15 @@ export default async function Page({ params }: { params: { track: string; slug: 
     Solution,
     Countdown,
     pre: CodeBlock,
-    table: (props: any) => (
+    table: (props: React.ComponentProps<'table'>) => (
       <div className="w-full overflow-x-auto my-8 not-prose rounded-lg border border-[#334155]">
         <table className="w-full text-left border-collapse" {...props} />
       </div>
     ),
-    thead: (props: any) => <thead className="bg-[#1e293b] border-b border-[#334155]" {...props} />,
-    tr: (props: any) => <tr className="border-b border-[#334155]/50 last:border-0 hover:bg-[#1e293b]/30 transition-colors" {...props} />,
-    th: (props: any) => <th className="px-4 py-3 font-semibold text-xs text-slate-400 uppercase tracking-wider" {...props} />,
-    td: (props: any) => <td className="px-4 py-3 text-slate-300 text-sm align-top" {...props} />,
+    thead: (props: React.ComponentProps<'thead'>) => <thead className="bg-[#1e293b] border-b border-[#334155]" {...props} />,
+    tr: (props: React.ComponentProps<'tr'>) => <tr className="border-b border-[#334155]/50 last:border-0 hover:bg-[#1e293b]/30 transition-colors" {...props} />,
+    th: (props: React.ComponentProps<'th'>) => <th className="px-4 py-3 font-semibold text-xs text-slate-400 uppercase tracking-wider" {...props} />,
+    td: (props: React.ComponentProps<'td'>) => <td className="px-4 py-3 text-slate-300 text-sm align-top" {...props} />,
   };
 
   return (
